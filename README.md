@@ -1,3 +1,9 @@
+Unstable Code
+=========================
+
+The code contained within this branch is known to eb unstable. Do not blame me for the possible slow and agonising death
+this untested code may bring to your server and software. You have been warned.
+
 MyAlerts: Alerts System for MyBB
 ==========================
 

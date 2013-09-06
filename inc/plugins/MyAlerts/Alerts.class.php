@@ -3,8 +3,9 @@
  *  Main Alerts Class
  *
  * @package MyAlerts
+ * @author  Euan Torano <euan@euantor.com>
+ * @license http://opensource.org/licenses/mit-license.php MIT license
  * @version 1.1.0
- * @author  Euan T. <euan@euantor.com>
  */
 
 class Alerts

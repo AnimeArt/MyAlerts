@@ -1,4 +1,14 @@
 <?php
+/**
+ * MyAlerts administration module information.
+ *
+ * Handles registering of MyAlerts module within the ACP and how links are handled for the module.
+ *
+ * @package MyAlerts
+ * @author  Euan Torano <euan@euantor.com>
+ * @license http://opensource.org/licenses/mit-license.php MIT license
+ * @version 1.1.0
+ */
 
 // Disallow direct access to this file for security reasons
 if (!defined("IN_MYBB")) {

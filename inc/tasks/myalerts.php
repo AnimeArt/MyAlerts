@@ -1,12 +1,13 @@
 <?php
 /**
- *	MyAlerts alert cleanup task
+ *    MyAlerts alert cleanup task
  *
- *	A simple notification/alert system for MyBB
+ *    A simple notification/alert system for MyBB
  *
- *	@author Euan T. <euan@euantor.com>
- *	@version 1.00
- *	@package MyAlerts
+ * @package MyAlerts
+ * @author  Euan Torano <euan@euantor.com>
+ * @license http://opensource.org/licenses/mit-license.php MIT license
+ * @version 1.1.0
  */
 
 if (!defined('IN_MYBB')) {

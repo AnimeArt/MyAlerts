@@ -1,4 +1,14 @@
 <?php
+/**
+ * Alert Settings management module for MyAlerts.
+ *
+ * Allows the enabling/disabling of certain alert types for all users selection.
+ *
+ * @package MyAlerts
+ * @author  Euan Torano <euan@euantor.com>
+ * @license http://opensource.org/licenses/mit-license.php MIT license
+ * @version 1.1.0
+ */
 
 // Disallow direct access to this file for security reasons
 if (!defined("IN_MYBB")) {

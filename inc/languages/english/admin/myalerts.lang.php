@@ -1,11 +1,13 @@
 <?php
 /**
- * MyAlerts Administrator Language File
+ * Administration language file.
  *
- * A collection of language strings used within the Administrator Control Panel by MyAlerts.
+ * Contains language string definitions for the back-end of MyAlerts in the English language.
  *
+ * @package MyAlerts
  * @author  Euan Torano <euan@euantor.com>
- * @version 1.05
+ * @license http://opensource.org/licenses/mit-license.php MIT license
+ * @version 1.1.0
  */
 
 $l['myalerts']                       = "MyAlerts";

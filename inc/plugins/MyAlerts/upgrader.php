@@ -1,4 +1,14 @@
 <?php
+/**
+ * Upgrade script.
+ *
+ * Handles database schema changes occuring between versions of MyAlerts.
+ *
+ * @package MyAlerts
+ * @author  Euan Torano <euan@euantor.com>
+ * @license http://opensource.org/licenses/mit-license.php MIT license
+ * @version 1.1.0
+ */
 
 function myalerts_upgrader_run($currentVersion = '1.1.0', $oldVersion = '1.00')
 {
