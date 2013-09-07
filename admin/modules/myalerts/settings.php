@@ -84,7 +84,7 @@ switch ($mybb->input['action']) {
                 admin_redirect('index.php?module=myalerts-settings');
             }
 
-            $setting = $db->fetch_array($query);
+            $alertType = $db->fetch_array($query);
             unset($query);
 
             $form = new Form('index.php?module=myalerts-settings&amp;action=edit', 'post');
@@ -93,13 +93,18 @@ switch ($mybb->input['action']) {
             $formContainer->output_row(
                 'Code',
                 'An internal code used to represent this alert setting. This is only shown as a reference and cannot be edited.',
-                $form->generate_text_box('code', $setting['code'], array('id' => 'code', 'disabled')),
+                $form->generate_text_box('code', $alertType['code'], array('id' => 'code', 'disabled')),
                 'code'
             );
             $formContainer->output_row(
                 'Enabled',
                 'Is this alert type enabled for user selection?',
-                $form->generate_check_box('enabled', $setting['enabled'], 'Enabled', array('id' => 'enabled')),
+                $form->generate_check_box(
+                    'enabled',
+                    $alertType['enabled'],
+                    'Enabled',
+                    array('id' => 'enabled', 'checked' => $alertType['enabled'])
+                ),
                 'enabled'
             );
             $formContainer->end();
@@ -115,8 +120,7 @@ switch ($mybb->input['action']) {
     default:
         $page->output_header($lang->myalerts_nav_settings);
 
-        $settings = array();
-        $query    = $db->simple_select('alert_settings', '*');
+        $query = $db->simple_select('alert_settings', '*');
 
         $table = new Table;
         $table->construct_header('Title');
@@ -124,8 +128,6 @@ switch ($mybb->input['action']) {
         $table->construct_header($lang->controls, array('class' => 'align_center', 'width' => 150));
 
         while ($row = $db->fetch_array($query)) {
-            $settings[] = $row;
-
             $table->construct_cell(htmlspecialchars_uni($row['code']));
 
             $checked = '';
