@@ -57,13 +57,15 @@ switch ($mybb->input['action']) {
                 $enabled = 1;
             }
 
+
             if ($db->update_query(
                 'alert_settings',
                 array(
                      'enabled' => $enabled,
                 ),
                 "id='{$id}'",
-                1
+                1,
+                true
             )
             ) {
                 flash_message('Updated', 'success');
@@ -111,7 +113,7 @@ switch ($mybb->input['action']) {
                     'enabled',
                     $alertType['enabled'],
                     'Enabled',
-                    array('id' => 'enabled', 'checked' => $alertType['enabled'])
+                    array('id' => 'enabled', 'checked' => (int)$alertType['enabled'])
                 ),
                 'enabled'
             );
