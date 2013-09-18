@@ -1,77 +1,151 @@
-jQuery.noConflict();
+/*
+MyAlerts core class
+*/
 
-jQuery(document).ready(function($)
-{
-	$('body').on({
-		click: function(event)
-		{
-			event.preventDefault();
-			var popup_id = $(this).attr('id') + '_popup';
+(function() {
+  var MyAlerts,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-			$('#' + popup_id).attr('top', $(this).height() + 'px').slideToggle('fast', function() {
-				var toMarkRead = [];
-				$('[id^="alert_row_popup_"]').each(function() {
-					toMarkRead.push($(this).attr('id').substr(16));
-				});
+  MyAlerts = (function() {
+    MyAlerts.prototype.pollTime = 5;
 
-				$.get('xmlhttp.php?action=markRead', {
-					my_post_key: my_post_key,
-					toMarkRead: toMarkRead
-				}, function(data) {
+    MyAlerts.prototype.dropdownAnchor = "#myalerts_dropdown";
 
-				});
-			});
-			return false;
-		}
-	}, '.myalerts_popup_hook');
+    MyAlerts.prototype.numAlertsInDropdown = 5;
 
-	$('.myalerts_popup *').on('click', function(event) {
-		event.stopPropagation();
-	});
+    MyAlerts.prototype.myalertsPath = "xmlhttp.php";
 
-	$("body:not('.myalerts_popup:visible')").on('click', function() {
-        $('.myalerts_popup:visible').hide();
-	});
+    function MyAlerts() {
+      this.pollForAlerts = __bind(this.pollForAlerts, this);
+      this.markRead = __bind(this.markRead, this);
+      this.updateListing = __bind(this.updateListing, this);
+      this.updateDropdown = __bind(this.updateDropdown, this);
+      this.getAlerts = __bind(this.getAlerts, this);
+      var _this = this;
+      $('#getUnreadAlerts').on('click', function(event) {
+        event.preventDefault();
+        _this.getAlerts(_this.updateListing);
+      });
+      if (this.pollTime > 0) {
+        this.pollForAlerts();
+      }
+      $('.deleteAlertButton').on('click', function(event) {
+        var deleteButton;
+        event.preventDefault();
+        deleteButton = $(this);
+        return _this.deleteAlert(deleteButton.data("alert-id"), function(data) {
+          if (data.success) {
+            deleteButton.parents("tr").get(0).remove();
+            if (data.template) {
+              $("#latestAlertsListing").html(data.template);
+            }
+          } else {
+            console.error(data.error);
+          }
+        });
+      });
+      return;
+    }
 
-	$('#getUnreadAlerts').on('click', function(event) {
-		event.preventDefault();
-		$.get('xmlhttp.php?action=getNewAlerts', function(data) {
-			$('#latestAlertsListing').prepend(data);
-		});
-	});
+    MyAlerts.prototype.getAlerts = function(callback) {
+      if (typeof callback !== "function") {
+        callback = new Function(callback);
+      }
+      $.ajax(this.xmlhttp, {
+        cache: false,
+        dataType: "json",
+        type: "POST",
+        data: {
+          action: "getAlerts",
+          limit: this.numAlertsInDropdown
+        },
+        success: callback,
+        error: this.ajaxErrorHandler
+      });
+    };
 
-	$('.deleteAlertButton').on('click', function(event) {
-		event.preventDefault();
-		var deleteButton = $(this);
+    MyAlerts.prototype.updateDropdown = function(data) {
+      $(document).trigger("onUpdateDropdown", [data, this]);
+    };
 
-		$.getJSON(deleteButton.attr('href'), {accessMethod: 'js'}, function(data) {
-			if (data.success)
-			{
-				deleteButton.parents('tr').get(0).remove();
-				if (data.template)
-				{
-					$('#latestAlertsListing').html(data.template);
-				}
-			}
-			else
-			{
-				alert(data.error);
-			}
-		});
-	});
+    MyAlerts.prototype.updateListing = function(data) {
+      $(document).trigger("onUpdateListing", [data, this]);
+      $('#latestAlertsListing').prepend(data.template);
+    };
 
-	if (typeof myalerts_autorefresh !== 'undefined' && myalerts_autorefresh > 0)
-	{
-		window.setInterval(function() {
-			$.get('xmlhttp.php?action=getNewAlerts', function(data) {
-				$('#latestAlertsListing').prepend(data);
-			});
-		}, myalerts_autorefresh * 1000);
-	}
+    MyAlerts.prototype.deleteAlert = function(alertId, callback) {
+      if (alertId == null) {
+        alertId = 0;
+      }
+      alertId = parseInt(alertId, 10);
+      if (alertId < 1) {
+        return;
+      }
+      if (typeof callback !== "function") {
+        callback = new Function(callback);
+      }
+      $.ajax(this.xmlhttp, {
+        cache: false,
+        dataType: "json",
+        type: "POST",
+        data: {
+          id: alertId
+        },
+        success: callback,
+        error: this.ajaxErroHandler
+      });
+    };
 
-	if (typeof unreadAlerts !== 'undefined' && unreadAlerts > 0)
-	{
-		document.title = document.title + ' (' + unreadAlerts + ')';
-	}
+    MyAlerts.prototype.markRead = function(alertIds, callback) {
+      if (alertIds == null) {
+        alertIds = [];
+      }
+      if (!alertIds instanceof Array) {
+        alertIds = parseInt(alertIds, 10);
+        if (alertIds < 1) {
+          return;
+        }
+      } else if (alertIds.length < 1) {
+        return;
+      }
+      if (typeof callback !== "function") {
+        callback = new Function(callback);
+      }
+      $.ajax(this.xmlhttp, {
+        cache: false,
+        dataType: "json",
+        type: "POST",
+        data: {
+          toMarkRead: alertIds
+        },
+        success: callback,
+        error: this.ajaxErrorHandler
+      });
+    };
 
-});
+    MyAlerts.prototype.ajaxErrorHandler = function(jqXHR, textStatus, errorThrown) {
+      console.error(textStatus);
+      console.error(errorThrown);
+    };
+
+    MyAlerts.prototype.pollForAlerts = function() {
+      setTimeout(this.getAlerts(this.updateListing), this.pollTime * 1000);
+    };
+
+    MyAlerts.prototype.updateTitle = function(alertCount) {
+      if (alertCount == null) {
+        alertCount = 0;
+      }
+      if (alertCount < 0) {
+        alertCount = 0;
+      }
+      if (alertCount !== 0) {
+        document.title = "(" + alertCount + ") " + document.title;
+      }
+    };
+
+    return MyAlerts;
+
+  })();
+
+}).call(this);
