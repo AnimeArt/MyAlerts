@@ -10,7 +10,37 @@ class MyAlerts
 
 	constructor : ->
 		# Run when instantiated
-		alert "Myalerts.js is ready"
+
+		# Get unread alerts when clicking on the link to do so
+		$('#getUnreadAlerts').on('click', (event) =>
+			event.preventDefault()
+			@getAlerts @updateListing
+			return
+		)
+
+		# Check for new alerts on a schedule (for the listing page only)
+		@pollForAlerts() if @pollTime > 0
+
+		$('.deleteAlertButton').on('click', (event) =>
+			event.preventDefault()
+			deleteButton = $(this)
+
+			@deleteAlert(deleteButton.data("alert-id"), (data) =>
+				if data.success
+					deleteButton.parents("tr").get(0).remove()
+
+					if data.template
+						$("#latestAlertsListing").html(data.template)
+				else
+					console.error data.error
+
+				return
+			)
+		)
+
+		# Need to wire up our dropdown. Maybe create a dropdown class? IDK what's happening with the MyBB core for 1.8 in terms of their dropdowns...
+
+		return
 
 	getAlerts : (callback) =>
 		# Make sure callback is a callback function
@@ -97,6 +127,10 @@ class MyAlerts
 	ajaxErrorHandler : (jqXHR, textStatus, errorThrown) ->
 		console.error textStatus
 		console.error errorThrown
+		return
+
+	pollForAlerts : () =>
+		setTimeout(@getAlerts(@updateListing), @pollTime * 1000)
 		return
 
 	updateTitle : (alertCount = 0) ->
