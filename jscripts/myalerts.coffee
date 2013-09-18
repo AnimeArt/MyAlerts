@@ -6,7 +6,7 @@ class MyAlerts
 	pollTime : 5
 	dropdownAnchor : "#myalerts_dropdown"
 	numAlertsInDropdown : 5
-	myalertsPath : "xmlhttp.php"
+	xmlhttp : "xmlhttp.php"
 
 	constructor : ->
 		# Run when instantiated
@@ -36,10 +36,9 @@ class MyAlerts
 
 				return
 			)
+			return
 		)
-
 		# Need to wire up our dropdown. Maybe create a dropdown class? IDK what's happening with the MyBB core for 1.8 in terms of their dropdowns...
-
 		return
 
 	getAlerts : (callback) =>
