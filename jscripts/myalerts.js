@@ -13,7 +13,7 @@ MyAlerts core class
 
     MyAlerts.prototype.numAlertsInDropdown = 5;
 
-    MyAlerts.prototype.myalertsPath = "xmlhttp.php";
+    MyAlerts.prototype.xmlhttp = "xmlhttp.php";
 
     function MyAlerts() {
       this.pollForAlerts = __bind(this.pollForAlerts, this);
@@ -33,7 +33,7 @@ MyAlerts core class
         var deleteButton;
         event.preventDefault();
         deleteButton = $(this);
-        return _this.deleteAlert(deleteButton.data("alert-id"), function(data) {
+        _this.deleteAlert(deleteButton.data("alert-id"), function(data) {
           if (data.success) {
             deleteButton.parents("tr").get(0).remove();
             if (data.template) {
