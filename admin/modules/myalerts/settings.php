@@ -57,7 +57,6 @@ switch ($mybb->input['action']) {
                 $enabled = 1;
             }
 
-
             if ($db->update_query(
                 'alert_settings',
                 array(

@@ -72,7 +72,6 @@ function myalerts_install()
             id INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
             code VARCHAR(75) NOT NULL,
             enabled BIT(1) NOT NULL DEFAULT '1',
-            is_core INT(1) NOT NULL DEFAULT '0'
             ) ENGINE=MyISAM{$collation};"
         );
     }
@@ -92,19 +91,24 @@ function myalerts_install()
     // Settings
     $insertArray = array(
         0 => array(
-            'code' => 'rep',
+            'code'    => 'rep',
+            'enabled' => '1',
         ),
         1 => array(
-            'code' => 'pm',
+            'code'    => 'pm',
+            'enabled' => '1',
         ),
         2 => array(
-            'code' => 'buddylist',
+            'code'    => 'buddylist',
+            'enabled' => '1',
         ),
         3 => array(
-            'code' => 'quoted',
+            'code'    => 'quoted',
+            'enabled' => '1',
         ),
         4 => array(
-            'code' => 'post_threadauthor',
+            'code'    => 'post_threadauthor',
+            'enabled' => '1',
         ),
     );
 
