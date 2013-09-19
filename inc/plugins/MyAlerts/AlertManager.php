@@ -23,7 +23,7 @@ class AlertManager
     /**
      * Initialise a new AlertManager instance.
      *
-     * @param DB_MySQL|DV_MySQLi $db    A database instance.
+     * @param DB_MySQL|DB_MySQLi $db    A database instance.
      * @param datacache          $cache A datacache instance to store alert types in.
      *
      * @throws InvalidArgumentException
@@ -114,24 +114,6 @@ class AlertManager
     }
 
     /**
-     * Update the cache of alert types.
-     */
-    private function updateAlertTypeCache()
-    {
-        $query   = $this->db->simple_select('alert_settings', '*');
-        $toCache = array();
-
-        if ($this->db->num_rows($query) > 0) {
-            while ($type = $this->db->fetch_array($query)) {
-                $toCache[] = $type;
-            }
-
-        }
-
-        $this->cache->update('myalerts_alert_types', $toCache);
-    }
-
-    /**
      * Enable an alert type.
      * @param  string $code The code of the alert to enable.
      * @return bool         Whether the method was successful.
@@ -157,5 +139,37 @@ class AlertManager
                 'enabled' => 0,
             )
         );
+    }
+
+    /**
+     * Determine whether an alert type is enabled or not.
+     * 
+     * @param  string  $code The alert type to check.
+     * 
+     * @return boolean       Whether the alert is enabled.
+     */
+    public function isAlertTypeEnabled($code = '')
+    {
+        $alertTypes = $this->cache->read('myalerts_alert_types');
+
+        return (bool) $alertTypes[$code]['enabled'];
+    }
+
+    /**
+     * Update the cache of alert types.
+     */
+    private function updateAlertTypeCache()
+    {
+        $query   = $this->db->simple_select('alert_settings', '*');
+        $toCache = array();
+
+        if ($this->db->num_rows($query) > 0) {
+            while ($type = $this->db->fetch_array($query)) {
+                $toCache[$type['code']] = $type;
+            }
+
+        }
+
+        $this->cache->update('myalerts_alert_types', $toCache);
     }
 }
