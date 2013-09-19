@@ -51,7 +51,7 @@ class AlertManager
     {
         $insertArray = array(
             'code'    => $this->db->escape_string($alertDetails['code']),
-            'enabled' => (int)$alertDetails['enabled'],
+            'enabled' => (int) $alertDetails['enabled'],
         );
 
         // Check we don't have an alert type with this code already in the database
@@ -61,7 +61,7 @@ class AlertManager
             throw new Exception('Alert type already exists');
         }
 
-        $insertId = (int)$this->db->insert_query('alert_settings', $insertArray);
+        $insertId = (int) $this->db->insert_query('alert_settings', $insertArray);
 
         $this->updateAlertTypeCache();
 
@@ -85,7 +85,28 @@ class AlertManager
             throw new Exception('Alert type does not exist in the database');
         }
 
-        $success = (bool)$this->db->delete_query('alert_settings', "code = '{$code}'", 1);
+        $success = (bool) $this->db->delete_query('alert_settings', "code = '{$code}'", 1);
+
+        $this->updateAlertTypeCache();
+
+        return $success;
+    }
+
+    /**
+     * Edit an alert type.
+     * 
+     * @param  array  $alertDetails The new details for the alert type.
+     * 
+     * @return bool                 Whether the update was successful.
+     */
+    public function editAlertType(array $alertDetails = array())
+    {
+        $code = $this->db->escape_string($alertDetails['code']);
+        $updateArray = array(
+            'enabled' => (int) $alertDetails['enabled'],
+        );
+
+        $success = (bool) $this->db->update_query('alert_settings', $updateArray, "code = '{$code}'", 1);
 
         $this->updateAlertTypeCache();
 
@@ -108,5 +129,33 @@ class AlertManager
         }
 
         $this->cache->update('myalerts_alert_types', $toCache);
+    }
+
+    /**
+     * Enable an alert type.
+     * @param  string $code The code of the alert to enable.
+     * @return bool         Whether the method was successful.
+     */
+    public function enableAlertType($code = '')
+    {
+        return $this->editAlertType(array(
+                'code' => $code,
+                'enabled' => 1,
+            )
+        );
+    }
+
+    /**
+     * Disable an alert type.
+     * @param  string $code The code of the alert to disable.
+     * @return bool         Whether the method was successful.
+     */
+    public function disableAlertType($code = '')
+    {
+        return $this->editAlertType(array(
+                'code' => $code,
+                'enabled' => 0,
+            )
+        );
     }
 }
