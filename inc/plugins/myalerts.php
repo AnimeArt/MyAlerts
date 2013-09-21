@@ -38,7 +38,12 @@ function myalerts_info()
 
 function myalerts_install()
 {
-    global $db, $cache;
+	global $db, $lang, $cache;
+
+    if (!file_exists(PLUGINLIBRARY)) {
+        flash_message($lang->myalerts_pluginlibrary_missing, 'error');
+        admin_redirect('index.php?module=config-plugins');
+    }
 
     $plugin_info                 = myalerts_info();
     $euantor_plugins             = $cache->read('euantor_plugins');
@@ -71,7 +76,7 @@ function myalerts_install()
             "CREATE TABLE " . TABLE_PREFIX . "alert_settings(
             id INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
             code VARCHAR(75) NOT NULL,
-            enabled BIT(1) NOT NULL DEFAULT '1',
+            enabled BIT(1) NOT NULL DEFAULT 1
             ) ENGINE=MyISAM{$collation};"
         );
     }
