@@ -11,19 +11,27 @@
 class Alerts
 {
     const VERSION = '1.1.0';
-    private $mybb = null;
-    private $db = null;
+	/**
+	 * @var MyBB
+	 */
+	private $mybb;
+	/**
+	 * @var DB_MySQLi
+	 */
+	private $db;
 
-    /**
+	/**
      *  Constructor
      *
-     * @param Object MyBB Object
-     * @param Object MyBB Database Object
-     */
+	 * @param                    MyBB MyBB Object
+	 * @param DB_MySQL|DB_MySQLi MyBB Database Object
+	 *
+	 * @throws Exception
+	 */
     public function __construct($mybbIn, $dbIn)
     {
-        if ($mybbIn instanceof MyBB AND ($dbIn instanceof DB_MySQL OR $dbIn instanceof DB_MySQLi OR $dbIn instanceof DB_PgSQL OR $dbIn instanceof DB_SQLite)) {
-            $this->mybb = $mybbIn;
+		if ($mybbIn instanceof MyBB AND ($dbIn instanceof DB_MySQL OR $dbIn instanceof DB_MySQLi)) {
+			$this->mybb = $mybbIn;
             $this->db   = $dbIn;
         } else {
             throw new Exception('You must pass valid $mybb and $db objects as parameters to the Alerts class');
@@ -93,13 +101,15 @@ class Alerts
     /**
      *  Fetch all alerts for the currently logged in user
      *
-     * @param Integer The start point (used for multipaging alerts)
-     *
-     * @return Array
-     * @return boolean If the user has no new alerts
-     */
-    public function getAlerts($start = 0, $limit = 0)
-    {
+	 * @param int $start The start point (used for multipaging alerts)
+	 * @param int $limit The number of alerts to retrieve.
+	 *
+	 * @return array|bool
+	 *
+	 * @throws Exception
+	 */
+	public function getAlerts($start = 0, $limit = 0)
+	{
         if ((int)$this->mybb->user['uid'] > 0) { // check the user is a user and not a guest - no point wasting queries on guests afterall
             if ($limit == 0) {
                 $limit = $this->mybb->settings['myalerts_perpage'];
@@ -132,9 +142,9 @@ class Alerts
     /**
      *  Fetch all unread alerts for the currently logged in user
      *
-     * @return Array When the user has unread alerts
-     * @return boolean If the user has no new alerts
-     */
+	 * @return array|boolean When the user has unread alerts
+	 * @throws Exception
+	 */
     public function getUnreadAlerts()
     {
         if ((int)$this->mybb->user['uid'] > 0) { // check the user is a user and not a guest - no point wasting queries on guests afterall
@@ -165,8 +175,8 @@ class Alerts
     /**
      *  Mark alerts as read
      *
-     * @param String/Array Either a string formatted for use in a MySQL IN() clause or an array to be parsed into said form
-     */
+	 * @param string|array $alerts Either a string formatted for use in a MySQL IN() clause or an array to be parsed into said form
+	 */
     public function markRead($alerts = '')
     {
         $alerts = (array)$alerts;
@@ -213,11 +223,13 @@ class Alerts
     /**
      *  Add an alert
      *
-     * @param int    UID to add Alert for
-     * @param string The type of alert
-     * @param int    The TID - default to 0
-     * @param Array  Alert content
-     *
+	 * @param int    $uid     UID to add Alert for
+	 * @param string $type    The type of alert
+	 * @param int    $tid     The TID - default to 0
+	 * @param int    $from    The UID sending the alert.
+	 * @param Array  $content Alert content
+	 * @param int    $forced  Whether to force the alert to display or not.
+	 *
      * @return boolean
      */
     public function addAlert($uid, $type = '', $tid = 0, $from = 0, $content = array(), $forced = 0)
@@ -259,11 +271,13 @@ class Alerts
     /**
      *  Add an alert for multiple users
      *
-     * @param array  UIDs to add alert for
-     * @param string The type of alert
-     * @param int    The TID - default to 0
-     * @param Array  Alert content
-     *
+	 * @param array  $uids    UIDs to add alert for
+	 * @param string $type    The type of alert
+	 * @param int    $tid     The TID - default to 0
+	 * @param int    $from    The UID sending the alert.
+	 * @param Array  $content Alert content
+	 * @param int    $forced  Whether to force the alert to display or not.
+	 *
      * @return boolean
      */
     public function addMassAlert($uids, $type = '', $tid = 0, $from = 0, $content = array(), $forced = 0)
